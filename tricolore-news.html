@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tricolore News — Bot Discord</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #009246;
+      --red: #ce2b37;
+      --white: #ffffff;
+      --dark: #0d0d1a;
+      --dark2: #14142b;
+      --card: #1a1a2e;
+      --border: rgba(255,255,255,0.08);
+      --text: #e8e8f0;
+      --muted: #8888aa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Tricolore bar */
+    .tricolore {
+      display: flex;
+      height: 5px;
+      width: 100%;
+    }
+    .tricolore .g { background: var(--green); flex: 1; }
+    .tricolore .w { background: var(--white); flex: 1; }
+    .tricolore .r { background: var(--red); flex: 1; }
+
+    /* Nav */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2rem;
+      background: rgba(13,13,26,0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.3px;
+    }
+    .nav-logo .g { color: var(--green); }
+    .nav-logo .r { color: var(--red); }
+
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(0,146,70,0.1);
+      border: 0.5px solid rgba(0,146,70,0.3);
+      border-radius: 999px;
+      padding: 5px 14px;
+    }
+    .nav-dot {
+      width: 7px; height: 7px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,146,70,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 80% 80%, rgba(206,43,55,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 0.5px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero h1 .g { color: var(--green); }
+    .hero h1 .r { color: var(--red); }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+      font-weight: 300;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-uptime {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(0,146,70,0.12);
+      border: 0.5px solid rgba(0,146,70,0.35);
+      border-radius: 10px;
+      padding: 11px 22px;
+      font-size: 14px;
+      color: #4dff91;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 680px;
+      margin: 3rem auto 0;
+      padding: 0 1.5rem;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .stat {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Sections */
+    section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    /* News cards */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+    .news-card {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .news-card:hover {
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-2px);
+    }
+    .news-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 9px;
+    }
+    .tag-pol { background: rgba(55,138,221,0.15); color: #85b7eb; }
+    .tag-eco { background: rgba(99,153,34,0.15); color: #97c459; }
+    .tag-cro { background: rgba(206,43,55,0.15); color: #f09595; }
+    .tag-spo { background: rgba(212,83,126,0.15); color: #ed93b1; }
+
+    .news-card h3 {
+      font-size: 13.5px;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .news-card p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .news-time {
+      font-size: 11px;
+      color: rgba(136,136,170,0.6);
+      margin-top: 10px;
+    }
+
+    /* How it works */
+    .how { display: flex; flex-direction: column; gap: 10px; }
+    .how-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      transition: border-color 0.2s;
+    }
+    .how-step:hover { border-color: rgba(255,255,255,0.15); }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 500;
+      flex-shrink: 0;
+    }
+    .how-step h4 { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .how-step p { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+    /* Divider */
+    .divider { border: none; border-top: 0.5px solid var(--border); margin: 0 1.5rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+    .footer-logo .g { color: var(--green); }
+    .footer-logo .r { color: var(--red); }
+    .tricolore-mini {
+      display: flex;
+      width: 50px;
+      height: 4px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.8rem auto 0.6rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tricolore"><div class="g"></div><div class="w"></div><div class="r"></div></div>
+
+<nav>
+  <div class="nav-logo"><span class="g">Tricolore</span> <span class="r">News</span></div>
+  <div class="nav-status"><div class="nav-dot"></div> Bot online</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">🇮🇹 Notizie italiane in tempo reale</div>
+  <h1><span class="g">Tricolore</span><br><span class="r">News</span></h1>
+  <p>Il bot Discord che monitora l'Italia 24/7 — notizie, aggiornamenti e breaking news direttamente nel tuo server.</p>
+  <div class="hero-uptime">&#9679; Sistema operativo — uptime 99.9%</div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num" style="color: var(--green)">247</div>
+      <div class="stat-label">Notizie oggi</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Fonti monitorate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" style="color: var(--red)">5m</div>
+      <div class="stat-label">Aggiornamento</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<section>
+  <div class="section-label">Ultime notizie</div>
+  <div class="news-grid">
+    <div class="news-card">
+      <span class="news-tag tag-pol">Politica</span>
+      <h3>Governo approva nuova manovra economica per il 2026</h3>
+      <p>Il Consiglio dei Ministri ha dato il via libera al pacchetto di misure fiscali.</p>
+      <div class="news-time">14 min fa</div>
+    </div>
+    <div class="news-card">
+      <span class="news-tag tag-eco">Economia</span>
+      <h3>PIL italiano cresce dello 0.8% nel primo trimestre</h3>
+      <p>I dati Istat mostrano una crescita superiore alle aspettative degli analisti.</p>
+      <div class="news-time">38 min fa</div>
+    </div>
+    <div class="news-card">
+      <span class="news-tag tag-cro">Cronaca</span>
+      <h3>Maltempo al nord: allerta arancione in Lombardia e Piemonte</h3>
+      <p>La protezione civile invita alla massima prudenza nelle prossime 24 ore.</p>
+      <div class="news-time">1 ora fa</div>
+    </div>
+    <div class="news-card">
+      <span class="news-tag tag-spo">Sport</span>
+      <h3>Serie A: risultati e classifica dell'ultimo turno</h3>
+      <p>Grandi sorprese nel weekend di campionato con tre pareggi inaspettati.</p>
+      <div class="news-time">2 ore fa</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section>
+  <div class="section-label">Come funziona</div>
+  <div class="how">
+    <div class="how-step">
+      <div class="step-num" style="background:rgba(55,138,221,0.15); color:#85b7eb">1</div>
+      <div>
+        <h4>Scansione delle fonti</h4>
+        <p>Il bot controlla automaticamente i principali siti di notizie italiani ogni 5 minuti.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="step-num" style="background:rgba(99,153,34,0.15); color:#97c459">2</div>
+      <div>
+        <h4>Filtraggio intelligente</h4>
+        <p>Solo le notizie rilevanti e verificate vengono selezionate ed elaborate.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="step-num" style="background:rgba(206,43,55,0.15); color:#f09595">3</div>
+      <div>
+        <h4>Pubblicazione su Discord</h4>
+        <p>Le notizie vengono pubblicate nel canale apposito del tuo server in tempo reale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo"><span class="g">Tricolore</span> <span class="r">News</span></div>
+  <div class="tricolore-mini"><div class="g" style="flex:1"></div><div class="w" style="flex:1; background:#fff"></div><div class="r" style="flex:1"></div></div>
+  Informazione italiana in tempo reale
+</footer>
+
+<div class="tricolore"><div class="g"></div><div class="w"></div><div class="r"></div></div>
+
+</body>
+</html>
